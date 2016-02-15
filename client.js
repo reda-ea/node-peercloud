@@ -54,6 +54,11 @@ Client.prototype.listen = function(options, cb) {
         self.port = server.address().port;
         cb(null);
     };
+    server.on('error', function(err) {
+        if(err.code == 'EADDRINUSE' && !options.port && !self.options.port)
+            return server.listen(0);
+        cb(err);
+    });
     server.listen(port, savePort);
     return server;
 };
