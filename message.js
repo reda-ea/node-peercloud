@@ -13,11 +13,11 @@ exports.defaultMw = function(client, handler) {
         };
     return function(req, res, next) {
         if(req.method != 'POST')
-            next();
+            return next();
         if(client && !_.find(client.peers, function(peer) {
             return peer.id == req.headers['x-peercloud-id'];
         }))
-            next();
+            return next();
         handler(req.body || {}, function(err, resp) {
             if(err)
                 return next(err);
@@ -25,4 +25,14 @@ exports.defaultMw = function(client, handler) {
             res.end(JSON.stringify(resp));
         }, req, res);
     };
+};
+
+exports.middleware = function(app) {
+    return exports.defaultMw(app, function(body, cb, req) {
+        if(typeof app.onMessage == 'function')
+            return app.onMessage(_.find(app.peers, function(peer) {
+                return peer.id == req.headers['x-peercloud-id'];
+            }), body, cb);
+        cb(null, {});
+    });
 };

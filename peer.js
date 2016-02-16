@@ -7,14 +7,14 @@ var async = require('async');
 var Peer = function(client, data) {
     _.assign(this, data);
     this.clientId = function() {
-        return client.id
+        return client.id;
     };
 };
 
 Peer.prototype.send = function(type, json, cb) {
     var self = this;
     var args = Args([
-        {type: Args.STRING | Args.Required},
+        {type: Args.STRING | Args.Optional, _default: 'message'},
         {json: Args.OBJECT | Args.Optional, _default: {}},
         {cb: Args.FUNCTION | Args.Optional, _default: _.noop}
     ], arguments);
@@ -53,7 +53,7 @@ Peer.prototype.send = function(type, json, cb) {
 Peer.sendAll = function(peers, type, json, cb) {
     var args = Args([
         {peers: Args.ARRAY | Args.Required},
-        {type: Args.STRING | Args.Required},
+        {type: Args.STRING | Args.Optional, _default: 'message'},
         {json: Args.OBJECT | Args.Optional, _default: {}},
         {cb: Args.FUNCTION | Args.Optional, _default: _.noop}
     ], arguments);
