@@ -6,31 +6,31 @@ var Args = require('args-js');
 
 var $Peer = require('./peer');
 var $joined = require('./joined');
+var $message = require('./message');
 
 const DEFAULTPORT = 9338;
 
 exports.middleware = function(app) {
     app.use(requestIp.mw());
-    return function(req, res, next) {
-        var peerData = {};
-        peerData.id = req.body.id || uuid.v4();
-        peerData.ip = req.body.ip || req.clientIp;
-        peerData.port = req.body.port || DEFAULTPORT;
-        peerData.data = req.body.data || {};
+    return $message.defaultMw(function(body, cb, req) {
         var otherPeers = _.clone(app.peers);
-        var newPeer = new $Peer(app, peerData);
+        var newPeer = new $Peer(app, {
+            id: body.id || uuid.v4(),
+            ip: body.ip || req.clientIp,
+            port: body.port || DEFAULTPORT,
+            data: body.data || {}
+        });
         $joined.method.call(app, newPeer);
         app.peers.push(newPeer);
-        res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify({
+        cb(null, {
             status: 'joined',
             self: {
                 id: app.id,
                 data: app.options.data
             },
             peers: otherPeers
-        }));
-    };
+        });
+    });
 };
 
 exports.method = function(peers, options, cb) {

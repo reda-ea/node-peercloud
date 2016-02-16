@@ -2,16 +2,17 @@
 var Args = require('args-js');
 var _ = require('lodash');
 
+var $message = require('./message');
+
 exports.middleware = function(app) {
-    return function(req, res, next) {
+    return $message.defaultMw(app, function(body, cb) {
         app.peers = app.peers.filter(function(peer) {
-            return peer.id != req.body.id;
+            return peer.id != body.id;
         });
-        res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify({
+        cb(null, {
             status: 'removed'
-        }));
-    };
+        });
+    });
 };
 
 exports.method = function(cb) {

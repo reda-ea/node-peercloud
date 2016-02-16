@@ -2,19 +2,20 @@
 var Args = require('args-js');
 var _ = require('lodash');
 
+var $message = require('./message');
+
 exports.middleware = function(app) {
     setInterval(function() {
         if(app.peers.length)
             app.check();
     }, 1000);
-    return function(req, res, next) {
-        res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify({
+    return $message.defaultMw(app, function(body, cb) {
+        cb(null, {
             id: app.id,
             listening: !!app.port,
             joined: !!app.peers.length
-        }));
-    };
+        });
+    });
 };
 
 exports.method = function(peer, cb) {

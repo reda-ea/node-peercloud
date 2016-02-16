@@ -3,15 +3,15 @@ var Args = require('args-js');
 var _ = require('lodash');
 
 var $Peer = require('./peer');
+var $message = require('./message');
 
 exports.middleware = function(app) {
-    return function(req, res, next) {
-        app.peers.push(new $Peer(app, req.body));
-        res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify({
+    return $message.defaultMw(app, function(body, cb) {
+        app.peers.push(new $Peer(app, body));
+        cb(null, {
             status: 'added'
-        }));
-    };
+        });
+    });
 };
 
 exports.method = function(peer, cb) {
