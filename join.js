@@ -34,6 +34,7 @@ exports.middleware = function(app) {
 
 exports.method = function(peers, options, cb) {
     var self = this;
+    if(!options) options = {};
     if(!peers.length)
         return cb({code: 'NOPEERSFOUND'});
     request({
@@ -41,7 +42,12 @@ exports.method = function(peers, options, cb) {
         json: true,
         timeout: 1000,
         url: 'http://' + peers[0].ip + ':' + peers[0].port + '/join',
-        body: _.assign({}, self.options, options)
+        body: {
+            id: self.id,
+            ip: options.ip || self.options.ip || null,
+            port: self.port,
+            data: _.assign({}, self.options.data, options.data)
+        }
     }, function(err, res, body) {
         if(err || body.status != 'joined')
             return self.join(peers.slice(1), options, cb);
