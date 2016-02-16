@@ -19,7 +19,7 @@ exports.middleware = function(app) {
         peerData.data = req.body.data || {};
         var otherPeers = _.clone(app.peers);
         var newPeer = new $Peer(peerData);
-        $joined.broadcast.call(app, newPeer);
+        $joined.method.call(app, newPeer);
         app.peers.push(newPeer);
         res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify({

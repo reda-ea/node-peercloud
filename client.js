@@ -6,6 +6,7 @@ var http = require('http');
 var Args = require('args-js');
 var bodyParser = require('body-parser-json');
 
+var $Peer = require('./peer');
 var $join = require('./join');
 var $joined = require('./joined');
 
@@ -50,5 +51,15 @@ Client.prototype.listen = function(options, cb) {
 };
 
 Client.prototype.join = $join.method;
+
+Client.prototype.broadcast = function(type, json, cb) {
+    var args = Args([
+        {type: Args.STRING | Args.Required},
+        {json: Args.OBJECT | Args.Optional, _default: {}},
+        {cb: Args.FUNCTION | Args.Optional, _default: _.noop}
+    ], arguments);
+    type = args.type; json = args.json; cb = args.cb;
+    $Peer.sendAll(this.peers, type, json, cb);
+};
 
 module.exports = Client;
