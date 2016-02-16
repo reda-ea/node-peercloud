@@ -4,6 +4,7 @@ var connect = require('connect');
 var uuid = require('uuid');
 var http = require('http');
 var Args = require('args-js');
+var bodyParser = require('body-parser-json');
 
 var $join = require('./join');
 var $joined = require('./joined');
@@ -19,6 +20,7 @@ var Client = function(options) {
     app.id = uuid.v4();
     app.options = args.options;
     app.peers = [];
+    app.use(bodyParser.json());
     app.use('/join', $join.middleware(app));
     app.use('/joined', $joined.middleware(app));
     return app;

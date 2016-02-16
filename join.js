@@ -1,7 +1,6 @@
 
 var _ = require('lodash');
 var requestIp = require('request-ip');
-var bodyParser = require('body-parser-json');
 var uuid = require('uuid');
 var Args = require('args-js');
 
@@ -12,7 +11,6 @@ const DEFAULTPORT = 9338;
 
 exports.middleware = function(app) {
     app.use(requestIp.mw());
-    app.use(bodyParser.json());
     return function(req, res, next) {
         var peerData = {};
         peerData.id = req.body.id || uuid.v4();
