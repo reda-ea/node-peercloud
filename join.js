@@ -3,7 +3,6 @@ var _ = require('lodash');
 var requestIp = require('request-ip');
 var bodyParser = require('body-parser-json');
 var uuid = require('uuid');
-var request = require('request');
 var Args = require('args-js');
 
 var $Peer = require('./peer');
@@ -46,18 +45,12 @@ exports.method = function(peers, options, cb) {
     peers = args.peers; options = args.options; cb = args.cb;
     if(!peers.length)
         return cb({code: 'NOPEERSFOUND'});
-    request({
-        method: 'POST',
-        json: true,
-        timeout: 1000,
-        url: 'http://' + peers[0].ip + ':' + peers[0].port + '/join',
-        body: {
-            id: self.id,
-            ip: options.ip || self.options.ip || null,
-            port: self.port,
-            data: _.assign({}, self.options.data, options.data)
-        }
-    }, function(err, res, body) {
+    $Peer.prototype.send.call(peers[0], 'join', {
+        id: self.id,
+        ip: options.ip || self.options.ip || null,
+        port: self.port,
+        data: _.assign({}, self.options.data, options.data)
+    }, function(err, body) {
         if(err || body.status != 'joined')
             return self.join(peers.slice(1), options, cb);
         self.peers = body.peers.map(function(peerData) {

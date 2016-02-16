@@ -1,6 +1,5 @@
 
 var Args = require('args-js');
-var request = require('request');
 var _ = require('lodash');
 
 var $Peer = require('./peer');
@@ -37,18 +36,7 @@ exports.broadcast = function(peer, cb) {
     };
 
     this.peers.forEach(function(peer) {
-        request({
-            method: 'POST',
-            json: true,
-            timeout: 1000,
-            url: require('url').format({
-                protocol: 'http',
-                hostname: peer.ip,
-                port: peer.port,
-                pathname: 'joined'
-            }),
-            body: newpeer
-        }, function(err, res, body) {
+        peer.send('joined', newpeer, function(err, body) {
             var result = {peer: peer};
             if(err || body.status != 'added')
                 result.error = err || body;
