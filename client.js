@@ -9,6 +9,7 @@ var bodyParser = require('body-parser-json');
 var $Peer = require('./peer');
 var $join = require('./join');
 var $joined = require('./joined');
+var $leave = require('./leave');
 
 const DEFAULTPORT = 9338;
 
@@ -24,6 +25,7 @@ var Client = function(options) {
     app.use(bodyParser.json());
     app.use('/join', $join.middleware(app));
     app.use('/joined', $joined.middleware(app));
+    app.use('/left', $leave.middleware(app));
     return app;
 };
 
@@ -51,6 +53,7 @@ Client.prototype.listen = function(options, cb) {
 };
 
 Client.prototype.join = $join.method;
+Client.prototype.leave = $leave.method;
 
 Client.prototype.broadcast = function(type, json, cb) {
     var args = Args([
