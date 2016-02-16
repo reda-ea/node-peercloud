@@ -33,6 +33,9 @@ exports.middleware = function(app) {
             app.peers.push(newPeer);
             cb(null, {
                 status: 'joined',
+                id: newPeer.id,
+                ip: newPeer.ip,
+                port: newPeer.port,
                 self: {
                     id: app.id,
                     data: app.options.data
@@ -61,6 +64,8 @@ exports.method = function(peers, options, cb) {
     }, function(err, body) {
         if(err || body.status != 'joined')
             return self.join(peers.slice(1), options, cb);
+        if(body.id)
+            self.id = body.id;
         self.peers = body.peers.map(function(peerData) {
             return new $Peer(self, peerData);
         });
