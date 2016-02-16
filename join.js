@@ -4,6 +4,7 @@ var requestIp = require('request-ip');
 var bodyParser = require('body-parser-json');
 var uuid = require('uuid');
 var request = require('request');
+var Args = require('args-js');
 
 var $Peer = require('./peer');
 
@@ -34,7 +35,12 @@ exports.middleware = function(app) {
 
 exports.method = function(peers, options, cb) {
     var self = this;
-    if(!options) options = {};
+    var args = Args([
+        {peers: Args.ARRAY | Args.Required},
+        {options: Args.OBJECT | Args.Optional, _default: {}},
+        {cb: Args.FUNCTION | Args.Optional, _default: _.noop}
+    ], arguments);
+    peers = args.peers; options = args.options; cb = args.cb;
     if(!peers.length)
         return cb({code: 'NOPEERSFOUND'});
     request({

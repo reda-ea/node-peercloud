@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/reda-ea/node-peercloud#readme",
   "dependencies": {
+    "args-js": "^0.10.11",
     "body-parser-json": "^1.9.2",
     "connect": "^3.4.1",
     "lodash": "^4.3.0",

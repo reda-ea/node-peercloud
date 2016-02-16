@@ -3,16 +3,20 @@ var _ = require('lodash');
 var connect = require('connect');
 var uuid = require('uuid');
 var http = require('http');
+var Args = require('args-js');
 
 var $join = require('./join');
 
 const DEFAULTPORT = 9338;
 
 var Client = function(options) {
+    var args = Args([
+        {options: Args.OBJECT | Args.Optional, _default: {}}
+    ], arguments);
     var app = connect();
     _.extend(app, Client.prototype);
     app.id = uuid.v4();
-    app.options = options || {};
+    app.options = args.options;
     app.peers = [];
     app.use('/join', $join.middleware(app));
     return app;
@@ -20,7 +24,11 @@ var Client = function(options) {
 
 Client.prototype.listen = function(options, cb) {
     var self = this;
-    if(!options) options = {};
+    var args = Args([
+        {options: Args.OBJECT | Args.Optional, _default: {}},
+        {cb: Args.FUNCTION | Args.Optional, _default: _.noop}
+    ], arguments);
+    options = args.options; cb = args.cb;
     var port = options.port || self.options.port || DEFAULTPORT;
     var server = http.createServer(self);
     var savePort = function(err) {
