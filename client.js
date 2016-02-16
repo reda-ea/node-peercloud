@@ -59,6 +59,7 @@ Client.prototype.listen = function(options, cb) {
 Client.prototype.join = $join.method;
 Client.prototype.leave = $leave.method;
 Client.prototype.check = $check.method;
+Client.prototype.autoCheck = $check.auto;
 
 Client.prototype.broadcast = function(type, json, cb) {
     var args = Args([

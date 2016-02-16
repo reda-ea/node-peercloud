@@ -5,10 +5,6 @@ var _ = require('lodash');
 var $message = require('./message');
 
 exports.middleware = function(app) {
-    setInterval(function() {
-        if(app.peers.length)
-            app.check();
-    }, 1000);
     return $message.defaultMw(function(body, cb) {
         cb(null, {
             id: app.id,
@@ -17,6 +13,21 @@ exports.middleware = function(app) {
             joined: !!app.peers.length
         });
     });
+};
+
+exports.auto = function(interval) {
+    var self = this;
+    if(self._autocheck) {
+        clearInterval();
+        delete self._autocheck;
+    }
+    if(!interval) return;
+    if(interval === true)
+        interval = 5000;
+    self._autocheck = setInterval(function() {
+        if(self.peers.length)
+            self.check();
+    }, interval);
 };
 
 exports.method = function(peer, cb) {
