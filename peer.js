@@ -9,6 +9,11 @@ var Peer = function(client, data) {
     this.clientId = function() {
         return client.id;
     };
+    this.check = function(cb) {
+        if(typeof cb != 'function')
+            cb = _.noop;
+        client.check(this, cb);
+    };
 };
 
 Peer.prototype.send = function(type, json, cb) {
