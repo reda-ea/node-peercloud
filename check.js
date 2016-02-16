@@ -9,9 +9,10 @@ exports.middleware = function(app) {
         if(app.peers.length)
             app.check();
     }, 1000);
-    return $message.defaultMw(app, function(body, cb) {
+    return $message.defaultMw(function(body, cb) {
         cb(null, {
             id: app.id,
+            online: true,
             listening: !!app.port,
             joined: !!app.peers.length
         });

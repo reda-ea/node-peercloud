@@ -13,6 +13,10 @@ const DEFAULTPORT = 9338;
 exports.middleware = function(app) {
     app.use(requestIp.mw());
     return $message.defaultMw(function(body, cb, req) {
+        if(app.id == body.id || _.find(app.peers, function(peer) {
+            return peer.id == body.id;
+        }))
+            return cb({code: 'KNOWNPEERID'});
         var otherPeers = _.clone(app.peers);
         var newPeer = new $Peer(app, {
             id: body.id || uuid.v4(),
@@ -20,15 +24,21 @@ exports.middleware = function(app) {
             port: body.port || DEFAULTPORT,
             data: body.data || {}
         });
-        $joined.method.call(app, newPeer);
-        app.peers.push(newPeer);
-        cb(null, {
-            status: 'joined',
-            self: {
-                id: app.id,
-                data: app.options.data
-            },
-            peers: otherPeers
+        newPeer.send('status', function(err, body) {
+            if(err)
+                return cb(err);
+            if(body.id != newPeer.id)
+                return cb({code: 'WRONGPEERID'});
+            $joined.method.call(app, newPeer);
+            app.peers.push(newPeer);
+            cb(null, {
+                status: 'joined',
+                self: {
+                    id: app.id,
+                    data: app.options.data
+                },
+                peers: otherPeers
+            });
         });
     });
 };
