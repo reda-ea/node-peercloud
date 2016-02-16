@@ -6,6 +6,7 @@ var http = require('http');
 var Args = require('args-js');
 
 var $join = require('./join');
+var $joined = require('./joined');
 
 const DEFAULTPORT = 9338;
 
@@ -19,6 +20,7 @@ var Client = function(options) {
     app.options = args.options;
     app.peers = [];
     app.use('/join', $join.middleware(app));
+    app.use('/joined', $joined.middleware(app));
     return app;
 };
 

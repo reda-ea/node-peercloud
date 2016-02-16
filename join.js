@@ -7,6 +7,7 @@ var request = require('request');
 var Args = require('args-js');
 
 var $Peer = require('./peer');
+var $joined = require('./joined');
 
 const DEFAULTPORT = 9338;
 
@@ -20,7 +21,9 @@ exports.middleware = function(app) {
         peerData.port = req.body.port || DEFAULTPORT;
         peerData.data = req.body.data || {};
         var otherPeers = _.clone(app.peers);
-        app.peers.push(new $Peer(peerData));
+        var newPeer = new $Peer(peerData);
+        $joined.broadcast.call(app, newPeer);
+        app.peers.push(newPeer);
         res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify({
             status: 'joined',
