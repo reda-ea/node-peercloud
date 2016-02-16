@@ -6,7 +6,7 @@ var $Peer = require('./peer');
 
 exports.middleware = function(app) {
     return function(req, res, next) {
-        app.peers.push(new $Peer(req.body));
+        app.peers.push(new $Peer(app, req.body));
         res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify({
             status: 'added'

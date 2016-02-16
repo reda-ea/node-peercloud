@@ -18,7 +18,7 @@ exports.middleware = function(app) {
         peerData.port = req.body.port || DEFAULTPORT;
         peerData.data = req.body.data || {};
         var otherPeers = _.clone(app.peers);
-        var newPeer = new $Peer(peerData);
+        var newPeer = new $Peer(app, peerData);
         $joined.method.call(app, newPeer);
         app.peers.push(newPeer);
         res.setHeader('Content-Type', 'application/json');
@@ -43,7 +43,7 @@ exports.method = function(peers, options, cb) {
     peers = args.peers; options = args.options; cb = args.cb;
     if(!peers.length)
         return cb({code: 'NOPEERSFOUND'});
-    $Peer.prototype.send.call(peers[0], 'join', {
+    new $Peer(self, peers[0]).send('join', {
         id: self.id,
         ip: options.ip || self.options.ip || null,
         port: self.port,
@@ -52,9 +52,9 @@ exports.method = function(peers, options, cb) {
         if(err || body.status != 'joined')
             return self.join(peers.slice(1), options, cb);
         self.peers = body.peers.map(function(peerData) {
-            return new $Peer(peerData);
+            return new $Peer(self, peerData);
         });
-        self.peers.push(new $Peer({
+        self.peers.push(new $Peer(self, {
             id: body.self.id,
             ip: peers[0].ip,
             port: peers[0].port,

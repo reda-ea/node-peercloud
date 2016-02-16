@@ -4,8 +4,11 @@ var Args = require('args-js');
 var request = require('request');
 var async = require('async');
 
-var Peer = function(data) {
+var Peer = function(client, data) {
     _.assign(this, data);
+    this.clientId = function() {
+        return client.id
+    };
 };
 
 Peer.prototype.send = function(type, json, cb) {
@@ -21,6 +24,9 @@ Peer.prototype.send = function(type, json, cb) {
         method: 'POST',
         json: true,
         timeout: 1000,
+        headers: {
+            'x-peercloud-id': self.clientId()
+        },
         url: require('url').format({
             protocol: 'http',
             hostname: self.ip,
