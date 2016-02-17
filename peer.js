@@ -66,7 +66,7 @@ Peer.sendAll = function(peers, type, json, cb) {
 
     async.map(peers, function(peer, cb) {
         peer.send(type, json, function(err, body) {
-            var result = {peer: peer};
+            var result = {peer: peer.data};
             if(err)
                 result.error = err;
             else
