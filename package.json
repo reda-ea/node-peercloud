@@ -1,6 +1,6 @@
 {
   "name": "peercloud",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Very simple HTTP based P2P private cloud",
   "main": "index.js",
   "scripts": {
