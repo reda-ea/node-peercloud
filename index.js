@@ -21,7 +21,7 @@ module.exports = function(options, cb) {
             if(err && err.code != 'NOPEERSFOUND')
                 return cb(err);
             client.autoCheck(true);
-            var proxy = {};
+            var proxy = {data: data};
             proxy.peers = function() {
                 return client.peers.map(function(peer) {
                     var peerproxy = {data: peer.data};
@@ -32,6 +32,7 @@ module.exports = function(options, cb) {
                 });
             };
             proxy.update = function(data, cb) {
+                this.data = data;
                 client.update(data, cb);
             };
             proxy.send = function(data, cb) {
