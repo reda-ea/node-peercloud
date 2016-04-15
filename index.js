@@ -10,9 +10,10 @@ module.exports = function(options, cb) {
     var peers = options.peers || [];
 
     var client = new $client({data: data, port: port});
+    var proxy = {data: data};
     if(typeof handler == 'function')
         client.onMessage = function(peer, body, cb) {
-            handler(peer.data, body, cb);
+            handler.call(proxy, peer.data, body, cb);
         };
     client.listen(function(err) {
         if(err)
@@ -21,7 +22,6 @@ module.exports = function(options, cb) {
             if(err && err.code != 'NOPEERSFOUND')
                 return cb(err);
             client.autoCheck(true);
-            var proxy = {data: data};
             proxy.peers = function() {
                 return client.peers.map(function(peer) {
                     var peerproxy = {data: peer.data};
