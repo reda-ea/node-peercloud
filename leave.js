@@ -21,8 +21,8 @@ exports.method = function(cb) {
     ], arguments);
     cb = args.cb;
 
-    this.peers = [];
     this.broadcast('left', {
         id: this.id
     }, cb);
+    this.peers = [];
 };
