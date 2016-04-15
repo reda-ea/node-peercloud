@@ -31,6 +31,9 @@ module.exports = function(options, cb) {
                     return peerproxy;
                 });
             };
+            proxy.update = function(data, cb) {
+                client.update(data, cb);
+            };
             proxy.send = function(data, cb) {
                 client.broadcast('message', data, cb);
             };

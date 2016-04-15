@@ -11,6 +11,7 @@ var $join = require('./join');
 var $joined = require('./joined');
 var $leave = require('./leave');
 var $check = require('./check');
+var $update = require('./update');
 var $message = require('./message');
 
 const DEFAULTPORT = 9338;
@@ -29,6 +30,7 @@ var Client = function(options) {
     app.use('/joined', $joined.middleware(app));
     app.use('/left', $leave.middleware(app));
     app.use('/status', $check.middleware(app));
+    app.use('/update', $update.middleware(app));
     app.use('/message', $message.middleware(app));
     return app;
 };
@@ -60,6 +62,7 @@ Client.prototype.join = $join.method;
 Client.prototype.leave = $leave.method;
 Client.prototype.check = $check.method;
 Client.prototype.autoCheck = $check.auto;
+Client.prototype.update = $update.method;
 
 Client.prototype.broadcast = function(type, json, cb) {
     var args = Args([
