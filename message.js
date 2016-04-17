@@ -18,6 +18,8 @@ exports.defaultMw = function(client, handler) {
             return peer.id == req.headers['x-peercloud-id'];
         }))
             return next();
+        if(client && client.auth && !client.auth.verify(req))
+            return next();
         handler(req.body || {}, function(err, resp) {
             if(err)
                 return next(err);

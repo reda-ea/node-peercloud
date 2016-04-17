@@ -14,6 +14,11 @@ var Peer = function(client, data) {
             cb = _.noop;
         client.check(this, cb);
     };
+    this.sign = function(request) {
+        if(client.auth)
+            return client.auth.sign(request);
+        return request;
+    };
 };
 
 Peer.prototype.send = function(type, json, cb) {
@@ -25,7 +30,7 @@ Peer.prototype.send = function(type, json, cb) {
     ], arguments);
     type = args.type; json = args.json; cb = args.cb;
 
-    request({
+    request(this.sign({
         method: 'POST',
         json: true,
         timeout: 1000,
@@ -39,7 +44,7 @@ Peer.prototype.send = function(type, json, cb) {
             pathname: type
         }),
         body: json
-    }, function(err, res, body) {
+    }), function(err, res, body) {
         if(err)
             return cb(err);
         if(_.toString(res.statusCode)[0] != '2')
